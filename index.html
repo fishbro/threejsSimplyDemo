@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Demonstration of three.js</title>
+
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="fonts/day_icons/style.css">
+    </head>
+    <body class="loading">
+        
+		<div id="screen"></div>
+		
+		<div class="controls">
+			<!-- <button data-type="camera">Get camera pos</button> -->
+			<button data-type="time" data-time="morning"><i class="icon-sunset-4"></i></button>
+			<button data-type="time" data-time="daytime"><i class="icon-sun"></i></button>
+			<button data-type="time" data-time="evening"><i class="icon-sunset-3"></i></button>
+			<button data-type="time" data-time="initial"><i class="icon-moon"></i></button>
+			<button data-type="layers-switch"><i class="icon-layers"></i></button>
+
+			<div class="sub_controls">
+				<div class="control">
+					<label for="map_type">Type:</label>
+					<select name="map_type" id="map_type">
+						<option value="satellite">Satellite</option>
+						<option value="terrain">Terrain</option>
+					</select>
+				</div>
+				<div class="control">
+					<input type="checkbox" name="camera_auto" id="camera_automode">
+					<label for="camera_automode">Auto camera</label>
+				</div>
+				<div class="control">
+					<input type="checkbox" name="auto" id="daystate_automode">
+					<label for="daystate_automode">Auto daystate</label>
+				</div>
+				<div class="control">
+					<input type="checkbox" name="roads" id="roads_sw">
+					<label for="roads_sw">Roads</label>
+				</div>
+				<div class="control">
+					<input type="checkbox" checked name="water" id="water_sw">
+					<label for="water_sw">Water</label>
+				</div>
+				<div class="control">
+					<input type="checkbox" checked name="bump" id="bump_sw">
+					<label for="bump_sw">Bump maping</label>
+				</div>
+				<div class="control">
+					<input type="checkbox" checked name="shadow" id="shadow_sw">
+					<label for="shadow_sw">Shadow</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="loader"></div>
+
+        <script type="x-shader/x-vertex" id="vertexShader">
+			varying vec3 vWorldPosition;
+			void main() {
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			}
+		</script>
+		<script type="x-shader/x-fragment" id="fragmentShader">
+			uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+			varying vec3 vWorldPosition;
+			void main() {
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+			}
+		</script>
+        <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/Tween.js"></script>
+		<script src="js/script.js"></script>
+    </body>
+</html>
